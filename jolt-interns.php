@@ -18,6 +18,29 @@ add_shortcode("joltClasses", "joltClasses_sc");
 
 /*
 =========
+  Enqueue styles and scripts
+=========
+*/
+
+function add_jolt_intern_scripts_and_styles() {
+    wp_enqueue_style( 'jolt-intern-style', plugins_url('jolt-interns/css/jolt-intern-style.css') );
+    wp_enqueue_script( 'jolt-intern-script', plugins_url('jolt-interns/js/jolt-interns-script.js'), array ( 'jquery' ), 1.1, true);
+    //wp_enqueue_script( 'script-name', get_template_directory_uri() . '/js/example.js', array(), '1.0.0', true );
+}
+add_action( 'wp_enqueue_scripts', 'add_jolt_intern_scripts_and_styles' );
+
+// function add_jolt_intern_style() {
+// 	wp_enqueue_style('jolt-intern-style', plugins_url('jolt-interns/css/jolt-intern-style.css');
+// }
+// add_action( 'wp_enqueue_scripts', 'add_jolt_intern_style' );
+
+//add_action( 'wp_enqueue_scripts', 'add_ak_carousel_script' );
+// function add_ak_carousel_script() {
+// 	wp_enqueue_script( 'ak-carousel-script', plugins_url('ak-carousel/js/ak-carousel-script.js'), array ( 'jquery' ), 1.1, true);
+// }
+
+/*
+=========
   Display on website
 =========
 */
@@ -51,29 +74,36 @@ function joltClasses_sc($atts) {
 
 	$index = 0;
     $output .= 	'
-    	<div class="jolt-interns">';
+    	<div class="jolt-interns">
+        <div class="jolt-interns-content">';
 
 		    foreach($custom_posts as $post) : setup_postdata($post);
 		    	$slug = basename(get_permalink());
-		    	$title = get_the_title();
-		    	$content = jolt_classes_content();
+		    	$name = get_the_title();
+          $img = get_the_post_thumbnail_url();
+		    	$bio = jolt_classes_content();
           $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
           $hired = $meta['hired'] === 'hired' ? '- hired' : '';
+          $company_logo = $meta['company_logo'];
+
 
 		    	$output .= 	'
-		    	<div class="ak-post ak-carousel-post" id="'.$slug.'"
-		    		data-index="'.$index.'">
-					<h3 class="ak-post__headline ak-carousel-post__headline">
-			        	'.$title.$hired.'</h3>
-
-			        <div class="ak-post__content ak-carousel-post__content">'
-			        	.$content.
-			        '</div>
+		    	<div class="jolt-interns-item" id="'.$slug.'"
+		    		data-index="'.$index.'" style="background-image: url('.$img.')">
+            <button class="jolt-interns-item__inner js-jolt-interns-item-btn"
+              data-name="'.$name.'"
+              data-bio="'.$bio.'"
+              data-logo="'.$company_logo.'"
+              data-img="'.$img.'"
+              >
+					   <h3 class="jolt-interns-item__name">
+			        	'.$name.$hired.'</h3>
+            </button>
 			    </div>';
 
 			$index++;
 		    endforeach; wp_reset_postdata();
-	    	$output .= 	'</div>';
+	    	$output .= 	'</div></div>';
 
 	return $output;
 	}
