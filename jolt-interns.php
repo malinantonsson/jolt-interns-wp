@@ -201,12 +201,6 @@ function intern_columns( $columns ) {
 
 add_filter( 'manage_edit-jolt_interns_columns', 'intern_columns' );
 
-function classes_columns( $columns ) {
-    $columns['shortcode'] = 'Shortcode';
-    unset( $columns['description'] );
-    return $columns;
-}
-
 function populate_intern_columns( $column ) {
   $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
     if ( 'hired' == $column ) {
@@ -266,6 +260,13 @@ add_filter( 'parse_query','perform_filtering' );
 add_action( 'manage_posts_custom_column', 'populate_intern_columns' );
 
 
+function classes_columns( $columns ) {
+    $columns['shortcode'] = 'Shortcode';
+    unset( $columns['description'] );
+    return $columns;
+}
+
+
 
 add_filter( 'manage_edit-jolt_interns_class_columns', 'classes_columns' );
 
@@ -319,12 +320,12 @@ function display_jolt_intern_meta_box( $jolt_intern ) {
     <input type="hidden" name="your_meta_box_nonce" value="<?php echo wp_create_nonce( basename(__FILE__) ); ?>">
     <table>
       <tr>
-        <td style="width: 100%">Hired?</td>
+        <td style="width: 100px">Hired?</td>
         <td><input type="checkbox" name="jolt_interns[hired]" id="jolt_interns[hired]" value="hired" <?php if ( $meta['hired'] === 'hired' ) echo 'checked'; ?> /></td>
       </tr>
 
         <tr>
-          <td style="width: 100%">Company logo</td>
+          <td style="width: 100px">Company logo</td>
           <td>
             <p>
             	<label for="jolt_interns[company_logo]">Image Upload</label><br>
