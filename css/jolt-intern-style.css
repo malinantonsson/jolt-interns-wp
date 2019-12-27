@@ -8,6 +8,8 @@
 
 .jolt-interns-content {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .jolt-interns-item {
