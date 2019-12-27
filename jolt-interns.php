@@ -57,11 +57,14 @@ function joltClasses_sc($atts) {
 		    	$slug = basename(get_permalink());
 		    	$title = get_the_title();
 		    	$content = jolt_classes_content();
+          $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
+          $hired = $meta['hired'] === 'hired' ? '- hired' : '';
+
 		    	$output .= 	'
 		    	<div class="ak-post ak-carousel-post" id="'.$slug.'"
 		    		data-index="'.$index.'">
 					<h3 class="ak-post__headline ak-carousel-post__headline">
-			        	'.$title.'</h3>
+			        	'.$title.$hired.'</h3>
 
 			        <div class="ak-post__content ak-carousel-post__content">'
 			        	.$content.
