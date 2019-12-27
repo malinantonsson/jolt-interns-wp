@@ -45,60 +45,117 @@ function my_admin() {
     add_meta_box( 'jolt_intern_meta_box',
         'Jolt Intern Details',
         'display_jolt_intern_meta_box',
-        'jolt_interns', 'normal', 'high'
+        'jolt_interns',
+        'normal',
+        'high'
     );
 }
 
 function display_jolt_intern_meta_box( $jolt_intern ) {
-    // Retrieve current name of the Director and Movie Rating based on review ID
-    $movie_director = esc_html( get_post_meta( $jolt_intern->ID, 'movie_director', true ) );
-    $movie_rating = intval( get_post_meta( $jolt_intern->ID, 'movie_rating', true ) );
-    $intern_hired = get_post_meta( $jolt_intern->ID, 'intern_hired', true );
+    global $post;
+    $meta = get_post_meta( $post->ID, 'jolt_interns', true );
     ?>
+
+
+    <input type="hidden" name="your_meta_box_nonce" value="<?php echo wp_create_nonce( basename(__FILE__) ); ?>">
     <table>
+      <tr>
+        <td style="width: 100%">Hired?</td>
+        <td><input type="checkbox" name="jolt_interns[hired]" id="jolt_interns[hired]" value="hired" <?php if ( $meta['hired'] === 'hired' ) echo 'checked'; ?> /></td>
+      </tr>
+
         <tr>
-          <td style="width: 100%">Hired?</td>
-          <td><input type="checkbox" name="jolt_intern_hired" value="hired" <?php if(checked( $intern_hired, 1, false )) echo "checked"; ?> /></td>
-        </tr>
-        <tr>
-            <td style="width: 100%">Movie Director</td>
-            <td><input type="text" size="80" name="jolt_intern_director_name" value="<?php echo $movie_director; ?>" /></td>
-        </tr>
-        <tr>
-            <td style="width: 150px">Movie Rating</td>
-            <td>
-                <select style="width: 100px" name="jolt_intern_rating">
-                <?php
-                // Generate all items of drop-down list
-                for ( $rating = 5; $rating >= 1; $rating -- ) {
-                ?>
-                    <option value="<?php echo $rating; ?>" <?php echo selected( $rating, $movie_rating ); ?>>
-                    <?php echo $rating; ?> stars <?php } ?>
-                </select>
-            </td>
+          <td style="width: 100%">Company logo</td>
+          <td>
+            <p>
+            	<label for="jolt_interns[company_logo]">Image Upload</label><br>
+            	<input type="text" name="jolt_interns[company_logo]" id="jolt_interns[company_logo]" class="meta-image regular-text" value="<?php echo $meta['company_logo']; ?>">
+            	<input type="button" class="button image-upload" value="Browse">
+              <button id="jolt-intern-logo-remove" type="button" class="button" style="color: red; border-color: red;">Remove</button>
+            </p>
+            <div class="image-preview"><img class="jolt_interns_img_preview" src="<?php echo $meta['company_logo']; ?>" style="max-width: 250px;"></div>
+
+            <script>
+              jQuery(document).ready(function($) {
+                $('#jolt-intern-logo-remove').click(function(e) {
+                  var image_field = $(this).parent().children('.meta-image');
+                    $(this).parent().children('.meta-image').val('')
+                    $(this).parent().parent().find('.jolt_interns_img_preview').attr('src', '')
+
+                })
+                // Instantiates the variable that holds the media library frame.
+                var meta_image_frame
+                // Runs when the image button is clicked.
+                $('.image-upload').click(function(e) {
+                  // Get preview pane
+                  var meta_image_preview = $(this)
+                    .parent()
+                    .parent()
+                    .children('.image-preview')
+                  // Prevents the default action from occuring.
+                  e.preventDefault()
+
+                  var meta_image = $(this)
+                    .parent()
+                    .children('.meta-image')
+                  // // If the frame already exists, re-open it.
+                  if (meta_image_frame) {
+                    meta_image_frame.open()
+                    return
+                  }
+                  // // Sets up the media library frame
+                  meta_image_frame = wp.media.frames.meta_image_frame = wp.media({
+                    title: 'Add or select a company logo',
+                    button: {
+                      text: 'Select',
+                    },
+                  })
+                  // // Runs when an image is selected.
+                  meta_image_frame.on('select', function() {
+                    // Grabs the attachment selection and creates a JSON representation of the model.
+                    var media_attachment = meta_image_frame
+                      .state()
+                      .get('selection')
+                      .first()
+                      .toJSON()
+                    // Sends the attachment URL to our custom image input field.
+                    meta_image.val(media_attachment.url)
+                    meta_image_preview.children('img').attr('src', media_attachment.url)
+                  })
+                  // Opens the media library frame.
+                  meta_image_frame.open()
+                })
+              })
+            </script>
+          </td>
         </tr>
     </table>
     <?php
 }
 
-add_action( 'save_post', 'add_movie_review_fields', 10, 2 );
-
-function add_movie_review_fields( $intern_id, $intern ) {
+function save_intern_form( $intern_id, $intern ) {
     // Check post type for movie reviews
     if ( $intern->post_type == 'jolt_interns' ) {
-        // Store data in post meta table if present in post data
-        $is_hired = $_POST['jolt_intern_hired'] ? true : false;
-        update_post_meta( $intern_id, 'intern_hired', $is_hired );
+      // verify nonce
+    	if ( !wp_verify_nonce( $_POST['your_meta_box_nonce'], basename(__FILE__) ) ) {
+    		return $intern_id;
+    	}
 
-        // if ( isset( $_POST['jolt_intern_hired'] ) && $_POST['jolt_intern_hired'] != '' ) {
-        //     update_post_meta( $intern_id, 'intern_hired', $_POST['jolt_intern_hired'] );
-        // }
-        // if ( isset( $_POST['movie_review_director_name'] ) && $_POST['movie_review_director_name'] != '' ) {
-        //     update_post_meta( $intern_id, 'movie_director', $_POST['movie_review_director_name'] );
-        // }
-        // if ( isset( $_POST['movie_review_rating'] ) && $_POST['movie_review_rating'] != '' ) {
-        //     update_post_meta( $intern_id, 'movie_rating', $_POST['movie_review_rating'] );
-        // }
+      // check autosave
+    	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+    		return $intern_id;
+    	}
+
+      $old = get_post_meta( $intern_id, 'jolt_interns', true );
+    	$new = $_POST['jolt_interns'];
+
+      if ( $new && $new !== $old ) {
+    		update_post_meta( $intern_id, 'jolt_interns', $new );
+    	} elseif ( '' === $new && $old ) {
+    		delete_post_meta( $intern_id, 'jolt_interns', $old );
+    	}
     }
 }
+
+add_action( 'save_post', 'save_intern_form', 10, 2 );
 ?>
