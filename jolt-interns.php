@@ -23,8 +23,13 @@ add_shortcode("joltClasses", "joltClasses_sc");
 */
 
 function add_jolt_intern_scripts_and_styles() {
+//   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+// <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+    wp_enqueue_style( 'jquery-modal-style', "https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" );
     wp_enqueue_style( 'jolt-intern-style', plugins_url('jolt-interns/css/jolt-intern-style.css') );
-    wp_enqueue_script( 'jolt-intern-script', plugins_url('jolt-interns/js/jolt-interns-script.js'), array ( 'jquery' ), 1.1, true);
+
+    wp_enqueue_script( 'jquery-modal', "https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js", array ( 'jquery' ));
+    wp_enqueue_script( 'jolt-intern-script', plugins_url('jolt-interns/js/jolt-interns-script.js'), array ( 'jquery', 'jquery-modal' ), 1.1, true);
     //wp_enqueue_script( 'script-name', get_template_directory_uri() . '/js/example.js', array(), '1.0.0', true );
 }
 add_action( 'wp_enqueue_scripts', 'add_jolt_intern_scripts_and_styles' );
@@ -90,7 +95,7 @@ function joltClasses_sc($atts) {
 		    	$output .= 	'
 		    	<div class="jolt-interns-item" id="'.$slug.'"
 		    		data-index="'.$index.'" style="background-image: url('.$img.')">
-            <button class="jolt-interns-item__inner js-jolt-interns-item-btn"
+            <a  href="#test-modal" rel="modal:open" class="jolt-interns-item__inner js-jolt-interns-item-btn"
               data-name="'.$name.'"
               data-bio="'.$bio.'"
               data-logo="'.$company_logo.'"
@@ -98,8 +103,8 @@ function joltClasses_sc($atts) {
               >
 					   <h3 class="jolt-interns-item__name">
 			        	'.$name.$hired.'</h3>
-            </button>
-			    </div>';
+            </a>
+			    </div><div id="test-modal" class="modal">Modal content</div>';
 
 			$index++;
 		    endforeach; wp_reset_postdata();
