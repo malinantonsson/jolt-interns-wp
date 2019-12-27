@@ -81,6 +81,14 @@ function populate_columns( $column ) {
 
 add_action( 'manage_posts_custom_column', 'populate_columns' );
 
+function sort_me( $columns ) {
+    $columns['hired'] = 'jolt_interns[hired]';
+
+    return $columns;
+}
+
+add_filter( 'manage_edit-jolt_interns_sortable_columns', 'sort_me' );
+
 add_action( 'admin_init', 'my_admin' );
 
 
