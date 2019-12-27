@@ -39,7 +39,50 @@
     );
 }
 
+function create_my_taxonomies() {
+    register_taxonomy(
+        'jolt_interns_class',
+        'jolt_interns',
+        array(
+            'labels' => array(
+                'name' => 'Jolt Classes',
+                'add_new_item' => 'Add New Class',
+                'new_item_name' => "New Movie Class"
+            ),
+            'show_ui' => true,
+            'show_tagcloud' => false,
+            'hierarchical' => true
+        )
+    );
+}
+
+add_action( 'init', 'create_my_taxonomies', 0 );
+
+function my_columns( $columns ) {
+    $columns['hired'] = 'Hired';
+    unset( $columns['comments'] );
+    return $columns;
+}
+
+add_filter( 'manage_edit-jolt_interns_columns', 'my_columns' );
+
+function populate_columns( $column ) {
+  $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
+    if ( 'hired' == $column ) {
+        if ( $meta['hired'] === 'hired' ) {
+            echo 'yes';
+        } else {
+          echo 'no';
+        }
+
+    }
+
+}
+
+add_action( 'manage_posts_custom_column', 'populate_columns' );
+
 add_action( 'admin_init', 'my_admin' );
+
 
 function my_admin() {
     add_meta_box( 'jolt_intern_meta_box',
