@@ -195,20 +195,27 @@ add_action( 'init', 'create_jolt_taxonomy', 0 );
 */
 function intern_columns( $columns ) {
     $columns['hired'] = 'Hired';
+    $columns['class'] = 'Class';
     unset( $columns['comments'] );
     return $columns;
 }
 
 add_filter( 'manage_edit-jolt_interns_columns', 'intern_columns' );
 
-function populate_intern_columns( $column ) {
-  $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
-    if ( 'hired' == $column ) {
+function populate_intern_columns( $column_name, $post_id ) {
+    if ( 'hired' == $column_name ) {
+        $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
         if ( $meta['hired'] === 'hired' ) {
             echo 'yes';
         } else {
           echo 'no';
         }
+    }
+
+    if ('class' == $column_name) {
+      $term_obj_list = get_the_terms( $post_id, 'jolt_interns_class' );
+      $terms_string = join(', ', wp_list_pluck($term_obj_list, 'name'));
+      echo $terms_string;
     }
 }
 
@@ -250,6 +257,8 @@ function perform_filtering( $query ) {
 
 add_filter( 'parse_query','perform_filtering' );
 
+add_action( 'manage_posts_custom_column', 'populate_intern_columns', 10, 3 );
+
 
 /*
 =========
@@ -257,7 +266,6 @@ add_filter( 'parse_query','perform_filtering' );
 =========
 */
 
-add_action( 'manage_posts_custom_column', 'populate_intern_columns' );
 
 
 function classes_columns( $columns ) {
