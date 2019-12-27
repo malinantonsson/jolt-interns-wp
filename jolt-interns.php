@@ -111,7 +111,7 @@ function joltClasses_sc($atts) {
               <div class="jolt-intern-modal__section jolt-intern-modal__section--right">
                 <div class="jolt-intern-modal__header">
                   <h3 class="jolt-inter-modal__name">'.$name.'</h3>
-                  <img class="jolt-inter-modal__logo" src="'.$company_logo.'" /> 
+                  <img class="jolt-inter-modal__logo" src="'.$company_logo.'" />
                 </div>
                 <div class="jolt-inter-modal__bio">'.$bio.'</div>
               </div>
@@ -190,18 +190,24 @@ add_action( 'init', 'create_jolt_taxonomy', 0 );
 
 /*
 =========
-  Handle ordering/filtering of items in admin
+  Handle ordering/filtering of items in admin - INTERNS
 =========
 */
-function my_columns( $columns ) {
+function intern_columns( $columns ) {
     $columns['hired'] = 'Hired';
     unset( $columns['comments'] );
     return $columns;
 }
 
-add_filter( 'manage_edit-jolt_interns_columns', 'my_columns' );
+add_filter( 'manage_edit-jolt_interns_columns', 'intern_columns' );
 
-function populate_columns( $column ) {
+function classes_columns( $columns ) {
+    $columns['shortcode'] = 'Shortcode';
+    unset( $columns['description'] );
+    return $columns;
+}
+
+function populate_intern_columns( $column ) {
   $meta = get_post_meta( get_the_ID(), 'jolt_interns', true );
     if ( 'hired' == $column ) {
         if ( $meta['hired'] === 'hired' ) {
@@ -209,20 +215,16 @@ function populate_columns( $column ) {
         } else {
           echo 'no';
         }
-
     }
-
 }
 
-add_action( 'manage_posts_custom_column', 'populate_columns' );
-
-function sort_me( $columns ) {
+function sort_by_hired( $columns ) {
     $columns['hired'] = 'jolt_interns[hired]';
 
     return $columns;
 }
 
-add_filter( 'manage_edit-jolt_interns_sortable_columns', 'sort_me' );
+add_filter( 'manage_edit-jolt_interns_sortable_columns', 'sort_by_hired' );
 
 function filter_by_classes() {
     $screen = get_current_screen();
@@ -253,6 +255,36 @@ function perform_filtering( $query ) {
 }
 
 add_filter( 'parse_query','perform_filtering' );
+
+
+/*
+=========
+  Handle column in the CLASSES table
+=========
+*/
+
+add_action( 'manage_posts_custom_column', 'populate_intern_columns' );
+
+
+
+add_filter( 'manage_edit-jolt_interns_class_columns', 'classes_columns' );
+
+
+
+function populate_classes_columns( $content, $column_name, $term_id ) {
+
+  // echo $term;
+  if($column_name == 'shortcode') {
+    $term = get_term($term_id, 'jolt_interns_class');
+    echo '[joltClasses slug="'.$term->slug.'"]';
+  } else {
+    echo $column_name;
+  }
+}
+
+add_action( 'manage_jolt_interns_class_custom_column', 'populate_classes_columns', 10, 3 );
+
+
 
 
 /*
