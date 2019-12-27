@@ -1,12 +1,85 @@
 <?php
    /*
    Plugin Name: Jolt interns
-   description: a plugin to display jolt interns
+   description: a plugin to display jolt interns [joltClasses slug="class-slug"]
    Version: 1.0
    Author: Malin Antonsson
    Author URI: http://malin.dev
    License: GPL2
    */
+
+/*
+=========
+  Create the shortcode
+=========
+*/
+add_shortcode("joltClasses", "joltClasses_sc");
+
+
+/*
+=========
+  Display on website
+=========
+*/
+
+function jolt_classes_content( $more_link_text = null, $strip_teaser = false) {
+    $content = get_the_content( $more_link_text, $strip_teaser );
+    $content = apply_filters( 'the_content', $content );
+    $content = str_replace( ']]>', ']]&gt;', $content );
+    return $content;
+}
+
+function joltClasses_sc($atts) {
+	extract(shortcode_atts(array( "slug" => ''), $atts));
+    global $post;
+
+    $args = array(
+    	'post_type' => 'jolt_interns',
+    	'posts_per_page' => 50,
+    	'order'=> 'DSC',
+      'tax_query' => array(
+    		array(
+    			'taxonomy' => 'jolt_interns_class',
+    			'field' => 'slug',
+    			'terms' => $slug
+    		)
+    	),
+    	'orderby' => 'date');
+
+    $custom_posts = get_posts($args);
+    $output = '';
+
+	$index = 0;
+    $output .= 	'
+    	<div class="jolt-interns">';
+
+		    foreach($custom_posts as $post) : setup_postdata($post);
+		    	$slug = basename(get_permalink());
+		    	$title = get_the_title();
+		    	$content = jolt_classes_content();
+		    	$output .= 	'
+		    	<div class="ak-post ak-carousel-post" id="'.$slug.'"
+		    		data-index="'.$index.'">
+					<h3 class="ak-post__headline ak-carousel-post__headline">
+			        	'.$title.'</h3>
+
+			        <div class="ak-post__content ak-carousel-post__content">'
+			        	.$content.
+			        '</div>
+			    </div>';
+
+			$index++;
+		    endforeach; wp_reset_postdata();
+	    	$output .= 	'</div>';
+
+	return $output;
+	}
+
+ /*
+ =========
+ Set up custom post type: jolt_interns
+ =========
+ */
 
    add_action( 'init', 'create_jolt_interns' );
 
@@ -39,7 +112,13 @@
     );
 }
 
-function create_my_taxonomies() {
+/*
+=========
+Set up custom taxonomy: jolt_interns_class
+=========
+*/
+
+function create_jolt_taxonomy() {
     register_taxonomy(
         'jolt_interns_class',
         'jolt_interns',
@@ -56,8 +135,14 @@ function create_my_taxonomies() {
     );
 }
 
-add_action( 'init', 'create_my_taxonomies', 0 );
+add_action( 'init', 'create_jolt_taxonomy', 0 );
 
+
+/*
+=========
+  Handle ordering/filtering of items in admin
+=========
+*/
 function my_columns( $columns ) {
     $columns['hired'] = 'Hired';
     unset( $columns['comments'] );
@@ -119,9 +204,14 @@ function perform_filtering( $query ) {
 
 add_filter( 'parse_query','perform_filtering' );
 
+
+/*
+=========
+  Set up custom metaboxes
+=========
+*/
+
 add_action( 'admin_init', 'my_admin' );
-
-
 function my_admin() {
     add_meta_box( 'jolt_intern_meta_box',
         'Jolt Intern Details',
@@ -131,6 +221,12 @@ function my_admin() {
         'high'
     );
 }
+
+/*
+=========
+ Display custom metaboxes in admin
+=========
+*/
 
 function display_jolt_intern_meta_box( $jolt_intern ) {
     global $post;
@@ -214,6 +310,11 @@ function display_jolt_intern_meta_box( $jolt_intern ) {
     <?php
 }
 
+/*
+=========
+  Save the form in admin
+=========
+*/
 function save_intern_form( $intern_id, $intern ) {
     // Check post type for movie reviews
     if ( $intern->post_type == 'jolt_interns' ) {
