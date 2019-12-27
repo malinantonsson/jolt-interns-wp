@@ -95,7 +95,7 @@ function joltClasses_sc($atts) {
 		    	$output .= 	'
 		    	<div class="jolt-interns-item" id="'.$slug.'"
 		    		data-index="'.$index.'" style="background-image: url('.$img.')">
-            <a  href="#test-modal" rel="modal:open" class="jolt-interns-item__inner js-jolt-interns-item-btn"
+            <a  href="#modal-'.$slug.'" rel="modal:open" class="jolt-interns-item__inner js-jolt-interns-item-btn"
               data-name="'.$name.'"
               data-bio="'.$bio.'"
               data-logo="'.$company_logo.'"
@@ -104,7 +104,19 @@ function joltClasses_sc($atts) {
 					   <h3 class="jolt-interns-item__name">
 			        	'.$name.$hired.'</h3>
             </a>
-			    </div><div id="test-modal" class="modal">Modal content</div>';
+			    </div>
+          <div id="modal-'.$slug.'" class="modal jolt-intern-modal">
+            <div class="jolt-intern-modal__inner">
+              <div class="jolt-intern-modal__section jolt-intern-modal__section--left" style="background-image: url('.$img.')"></div>
+              <div class="jolt-intern-modal__section jolt-intern-modal__section--right">
+                <div class="jolt-intern-modal__header">
+                  <h3 class="jolt-inter-modal__name">'.$name.'</h3>
+                  <img class="jolt-inter-modal__logo" src="'.$company_logo.'" /> 
+                </div>
+                <div class="jolt-inter-modal__bio">'.$bio.'</div>
+              </div>
+              </div>
+          </div>';
 
 			$index++;
 		    endforeach; wp_reset_postdata();

@@ -41,3 +41,87 @@
   outline: none;
   opacity: 1;
 }
+
+/**********
+  Modal
+***********/
+
+.jolt-intern-modal {
+  width: 86%;
+  max-width: 86%;
+  background: #fff;
+  margin: 5% auto;
+  padding: 20px 40px 20px 20px;
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50%;
+  box-shadow: none;
+}
+
+.jolt-intern-modal__inner {
+  display: flex;
+  height: 100%;
+}
+
+.jolt-intern-modal__section--left {
+  flex: 0 1 40%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border-radius: 3px;
+}
+
+.jolt-intern-modal__section--right {
+  padding-left: 5%;
+  flex: 1 1 60%;
+}
+
+.jolt-intern-modal__header {
+  display: flex;
+  align-items: top;
+  justify-content: space-between;
+}
+
+.jolt-inter-modal__name {
+  font-size: 1.4em;
+  margin-top: 15%;
+}
+
+.jolt-inter-modal__logo {
+  max-width: 100%;
+  height: 15vh;
+  max-height: 100px;
+}
+
+/**********
+  jQuery modal style overrides
+***********/
+
+.jquery-modal.blocker {
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 8888;
+}
+
+.modal a.close-modal {
+  color: transparent;
+  text-indent: unset;
+  background-image: none;
+  top: -25px;
+  right: 6px;
+}
+
+.modal a.close-modal:hover {
+  color: transparent;
+}
+
+.modal a.close-modal:after {
+  content: "x";
+  color: #aaa;
+  font-size: 30px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.modal a.close-modal:hover:after {
+  color: #000;
+}
