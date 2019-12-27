@@ -89,6 +89,36 @@ function sort_me( $columns ) {
 
 add_filter( 'manage_edit-jolt_interns_sortable_columns', 'sort_me' );
 
+function filter_by_classes() {
+    $screen = get_current_screen();
+    global $wp_query;
+    if ( $screen->post_type == 'jolt_interns' ) {
+        wp_dropdown_categories( array(
+            'show_option_all' => 'Show All Classes',
+            'taxonomy' => 'jolt_interns_class',
+            'name' => 'jolt_interns_class',
+            'orderby' => 'name',
+            'selected' => ( isset( $wp_query->query['jolt_interns_class'] ) ? $wp_query->query['jolt_interns_class'] : '' ),
+            'hierarchical' => false,
+            'depth' => 3,
+            'show_count' => false,
+            'hide_empty' => true,
+        ) );
+    }
+}
+
+add_action( 'restrict_manage_posts', 'filter_by_classes' );
+
+function perform_filtering( $query ) {
+    $qv = &$query->query_vars;
+    if ( ( $qv['jolt_interns_class'] ) && is_numeric( $qv['jolt_interns_class'] ) ) {
+        $term = get_term_by( 'id', $qv['jolt_interns_class'], 'jolt_interns_class' );
+        $qv['jolt_interns_class'] = $term->slug;
+    }
+}
+
+add_filter( 'parse_query','perform_filtering' );
+
 add_action( 'admin_init', 'my_admin' );
 
 
