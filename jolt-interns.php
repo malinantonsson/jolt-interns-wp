@@ -158,4 +158,21 @@ function save_intern_form( $intern_id, $intern ) {
 }
 
 add_action( 'save_post', 'save_intern_form', 10, 2 );
+
+function include_template_function( $template_path ) {
+    if ( get_post_type() == 'jolt_interns' ) {
+        if ( is_single() ) {
+            // checks if the file exists in the theme first,
+            // otherwise serve the file from the plugin
+            if ( $theme_file = locate_template( array ( 'single-jolt_interns.php' ) ) ) {
+                $template_path = $theme_file;
+            } else {
+                $template_path = plugin_dir_path( __FILE__ ) . '/single-jolt_interns.php';
+            }
+        }
+    }
+    return $template_path;
+}
+
+add_filter( 'template_include', 'include_template_function', 1 );
 ?>
