@@ -10,6 +10,7 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  //justify-content: center;
 }
 
 .jolt-interns-item {
@@ -44,6 +45,19 @@
   opacity: 1;
 }
 
+@media only screen and (max-height: 1400px) and (max-width: 1025px) and (orientation: portrait) {
+  .jolt-interns-item {
+    width: calc(100% / 5);
+    height: 12.5vh;
+  }
+}
+
+/* @media only screen and (max-width: 415px) and (orientation: portrait) {
+  .jolt-interns-item {
+    height: 13.5%;
+  }
+} */
+
 /**********
   Modal
 ***********/
@@ -76,6 +90,7 @@
 .jolt-intern-modal__section--right {
   padding-left: 5%;
   flex: 1 1 60%;
+  overflow-y: scroll;
 }
 
 .jolt-intern-modal__header {
@@ -93,6 +108,76 @@
   max-width: 100%;
   height: 15vh;
   max-height: 100px;
+}
+
+@media screen and (max-height: 1025px) and (max-width: 1400px) and (orientation: portrait) {
+  .jolt-intern-modal {
+    height: 85vh;
+    width: 100%;
+    max-width: 100%;
+    margin: auto;
+  }
+
+  .jolt-intern-modal__inner {
+    flex-direction: column;
+  }
+
+  .jolt-intern-modal__section--left {
+    width: 70%;
+    margin: auto;
+    height: 33vh;
+  }
+
+  .jolt-intern-modal__section--right {
+    padding-right: 5%;
+  }
+
+  .jolt-inter-modal__name {
+    margin-top: 10px;
+  }
+
+  .jolt-inter-modal__bio {
+  }
+
+  .jolt-inter-modal__logo {
+    max-height: 50px;
+  }
+}
+
+@media only screen and (max-height: 1019px) and (orientation: landscape) {
+  .jolt-intern-modal {
+    height: 65vh;
+  }
+}
+
+@media only screen and (max-height: 767px) and (orientation: landscape) {
+  .jolt-intern-modal {
+    height: 70vh;
+  }
+
+  .jolt-inter-modal__bio {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  .jolt-inter-modal__name {
+    margin-top: 10px;
+  }
+
+  .jolt-inter-modal__logo {
+    max-height: 50px;
+  }
+}
+
+@media only screen and (max-width: 415px) {
+  .jolt-intern-modal {
+    padding: 0;
+  }
+
+  .jolt-inter-modal__bio {
+    font-size: 10px;
+    line-height: 1.3;
+  }
 }
 
 /**********
@@ -122,8 +207,26 @@
   font-size: 30px;
   font-weight: 700;
   text-align: center;
+  font-family: "Montserrat", sans-serif;
 }
 
 .modal a.close-modal:hover:after {
   color: #000;
+}
+
+@media screen and (max-height: 1025px) and (max-width: 1400px) {
+  .modal a.close-modal {
+    top: -10px;
+    right: 10px;
+  }
+
+  .modal a.close-modal:after {
+    font-size: 24px;
+  }
+}
+
+@media only screen and (max-width: 415px) {
+  .jquery-modal.blocker {
+    padding: 0;
+  }
 }
