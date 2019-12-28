@@ -98,7 +98,7 @@ function joltClasses_sc($atts) {
             style="background-image: url('.$img.')">
             <a  href="#modal-'.$slug.'" rel="modal:open" class="jolt-interns-item__inner js-jolt-interns-item-btn">
 					   <h3 class="jolt-interns-item__name">
-			        	'.$name.$hired.'</h3>
+			        	'.$name.'<br />'.$hired.'</h3>
             </a>
 
             <div id="modal-'.$slug.'" class="modal jolt-intern-modal">
